@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <rect width="640" height="480" fill="#f7eef8" />
+  <rect x="100" y="180" width="440" height="180" rx="24" ry="24" fill="#ab84c9" />
+  <rect x="130" y="120" width="380" height="140" rx="24" ry="24" fill="#f7eef8" />
+  <rect x="140" y="220" width="120" height="100" rx="18" ry="18" fill="#6c4e8f" />
+  <rect x="380" y="220" width="120" height="100" rx="18" ry="18" fill="#6c4e8f" />
+  <text x="320" y="430" text-anchor="middle" fill="#6c4e8f" font-family="Arial, sans-serif" font-size="44">Canapé</text>
+</svg>

@@ -1,0 +1,153 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f6f7f9;
+    color: #1a1a1a;
+}
+.container {
+    width: min(1160px, 100% - 32px);
+    margin: 0 auto;
+    padding: 16px 0;
+}
+.site-header {
+    background: #1b6ca8;
+    color: white;
+    padding: 16px 0;
+}
+.site-header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.site-header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+.site-header h1 a {
+    color: white;
+    text-decoration: none;
+}
+.site-header nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 16px;
+}
+.ads-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: 24px;
+}
+.ad-card, .message-card, .form-page, .auth-form, .ad-detail {
+    background: white;
+    border: 1px solid #dde2e8;
+    border-radius: 8px;
+    padding: 18px;
+}
+.ad-card img, .ad-detail img {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    border-radius: 6px;
+}
+.ad-card img {
+    max-height: 260px;
+}
+.card-content {
+    margin-top: 12px;
+}
+.price {
+    color: #1b6ca8;
+    font-weight: bold;
+    margin: 8px 0;
+}
+.button, button {
+    display: inline-block;
+    background: #1b6ca8;
+    color: white;
+    padding: 10px 16px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.button-secondary {
+    background: #6c757d;
+}
+.button-danger {
+    background: #d9534f;
+}
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+.alert-error {
+    background: #ffe6e6;
+    color: #a33;
+}
+.alert-success {
+    background: #e7f5e1;
+    color: #2d662f;
+}
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 16px;
+    border: 1px solid #cad2d8;
+    border-radius: 6px;
+}
+textarea {
+    min-height: 140px;
+}
+.site-footer {
+    background: #fff;
+    border-top: 1px solid #dde2e8;
+    padding: 16px 0;
+    text-align: center;
+    margin-top: 24px;
+}
+.filters form {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    align-items: end;
+}
+.ad-detail {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1.2fr 1fr;
+    margin-top: 24px;
+}
+.message-form textarea {
+    height: 120px;
+}
+.owner-actions {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+}
+.edit-photo {
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 12px;
+}
+@media (max-width: 860px) {
+    .ad-detail {
+        grid-template-columns: 1fr;
+    }
+    .site-header .container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .site-header nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+    }
+}

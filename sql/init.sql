@@ -1,0 +1,41 @@
+-- Base de données pour le projet Leboncoin
+CREATE DATABASE IF NOT EXISTS projet_annonce CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE projet_annonce;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    description TEXT NOT NULL,
+    photo VARCHAR(255) NOT NULL,
+    category VARCHAR(100) DEFAULT 'Autres',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS favorites (
+    user_id INT NOT NULL,
+    ad_id INT NOT NULL,
+    PRIMARY KEY (user_id, ad_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (ad_id) REFERENCES ads(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    ad_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (ad_id) REFERENCES ads(id) ON DELETE CASCADE
+);
