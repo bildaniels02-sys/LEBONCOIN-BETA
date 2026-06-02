@@ -1,16 +1,63 @@
 <?php
-// Database configuration
-$dsn = 'mysql:host=127.0.0.1;dbname=projet_annonce;charset=utf8mb4';
+// Database configuration (MySQLi)
+$dbHost = '127.0.0.1';
+$dbName = 'projet_annonce';
 $dbUser = 'root';
 $dbPass = 'root';
 
-try {
-    $pdo = new PDO($dsn, $dbUser, $dbPass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-} catch (PDOException $e) {
-    die('Connexion échouée : ' . $e->getMessage());
+$mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+if ($mysqli->connect_errno) {
+    die('Connexion échouée : ' . $mysqli->connect_error);
+}
+
+// Helper: quote and prepare SQL with named parameters (safe for values)
+function db_quote($value) {
+    global $mysqli;
+    if ($value === null) {
+        return 'NULL';
+    }
+    return "'" . $mysqli->real_escape_string((string)$value) . "'";
+}
+
+function db_prepare_sql(string $sql, array $params = []): string {
+    if (empty($params)) return $sql;
+    // Replace :name occurrences with quoted values
+    foreach ($params as $key => $val) {
+        $placeholder = ':' . $key;
+        $sql = str_replace($placeholder, db_quote($val), $sql);
+    }
+    return $sql;
+}
+
+function db_query_all(string $sql, array $params = []) {
+    global $mysqli;
+    $final = db_prepare_sql($sql, $params);
+    $res = $mysqli->query($final);
+    if ($res === false) return [];
+    $rows = $res->fetch_all(MYSQLI_ASSOC);
+    $res->free();
+    return $rows;
+}
+
+function db_query_one(string $sql, array $params = []) {
+    global $mysqli;
+    $final = db_prepare_sql($sql, $params);
+    $res = $mysqli->query($final);
+    if ($res === false) return false;
+    $row = $res->fetch_assoc();
+    $res->free();
+    return $row;
+}
+
+function db_execute(string $sql, array $params = []) {
+    global $mysqli;
+    $final = db_prepare_sql($sql, $params);
+    return $mysqli->query($final);
+}
+
+function db_last_id() {
+    global $mysqli;
+    return $mysqli->insert_id;
 }
 
 session_start();

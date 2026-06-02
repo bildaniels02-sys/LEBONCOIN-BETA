@@ -100,3 +100,24 @@ function uploadPhoto($file, &$error = null) {
     $error = 'Impossible de déplacer le fichier uploadé.';
     return null;
 }
+
+/**
+ * Send a message for an ad: find or create a conversation, then insert message.
+ */
+function sendMessageForAd($ad_id, $from_user_id, $to_user_id, $content) {
+    global $mysqli;
+    // try to find existing conversation
+    $sql = db_prepare_sql('SELECT id FROM conversations WHERE ad_id = :ad_id AND ((user_one = :u1 AND user_two = :u2) OR (user_one = :u2 AND user_two = :u1)) LIMIT 1', ['ad_id' => $ad_id, 'u1' => $from_user_id, 'u2' => $to_user_id]);
+    $res = $mysqli->query($sql);
+    $conv = $res ? $res->fetch_assoc() : null;
+    if (!$conv) {
+        $create = db_prepare_sql('INSERT INTO conversations (ad_id, user_one, user_two) VALUES (:ad_id, :u1, :u2)', ['ad_id' => $ad_id, 'u1' => $from_user_id, 'u2' => $to_user_id]);
+        $mysqli->query($create);
+        $conv_id = $mysqli->insert_id;
+    } else {
+        $conv_id = $conv['id'];
+    }
+
+    $sql = db_prepare_sql('INSERT INTO messages (sender_id, ad_id, conversation_id, content, is_read) VALUES (:sender_id, :ad_id, :conv_id, :content, 0)', ['sender_id' => $from_user_id, 'ad_id' => $ad_id, 'conv_id' => $conv_id, 'content' => $content]);
+    return $mysqli->query($sql);
+}

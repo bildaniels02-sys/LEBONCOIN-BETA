@@ -33,15 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$photoPath) {
             $errors[] = $photoError ?: 'La photo doit être un fichier image valide.';
         } else {
-            $stmt = $pdo->prepare('INSERT INTO ads (user_id, title, price, description, photo, category) VALUES (:user_id, :title, :price, :description, :photo, :category)');
-            $stmt->execute([
-                ':user_id' => $_SESSION['user_id'],
-                ':title' => $title,
-                ':price' => $price,
-                ':description' => $description,
-                ':photo' => $photoPath,
-                ':category' => $category,
+            global $mysqli;
+            $sqlInsert = db_prepare_sql('INSERT INTO ads (user_id, title, price, description, photo, category) VALUES (:user_id, :title, :price, :description, :photo, :category)', [
+                'user_id' => $_SESSION['user_id'],
+                'title' => $title,
+                'price' => $price,
+                'description' => $description,
+                'photo' => $photoPath,
+                'category' => $category,
             ]);
+            $mysqli->query($sqlInsert);
             flash('success', 'Annonce créée avec succès.');
             redirect('index.php');
         }

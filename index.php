@@ -29,9 +29,16 @@ if ($filters['search']) {
 }
 $sql .= ' ORDER BY created_at DESC';
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$ads = $stmt->fetchAll();
+$ads = [];
+if (!empty($sql)) {
+    global $mysqli;
+    $final = db_prepare_sql($sql, $params);
+    $res = $mysqli->query($final);
+    if ($res) {
+        $ads = $res->fetch_all(MYSQLI_ASSOC);
+        $res->free();
+    }
+}
 $categories = getCategories();
 include __DIR__ . '/templates/header.php';
 ?>

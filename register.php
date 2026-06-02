@@ -18,14 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $stmt = $pdo->prepare('SELECT id FROM users WHERE email = :email');
-        $stmt->execute([':email' => $email]);
-        if ($stmt->fetch()) {
+        global $mysqli;
+        $final = db_prepare_sql('SELECT id FROM users WHERE email = :email', ['email' => $email]);
+        $res = $mysqli->query($final);
+        $existing = $res ? $res->fetch_assoc() : false;
+        if ($existing) {
             $errors[] = 'Cet email est déjà utilisé.';
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare('INSERT INTO users (email, password_hash) VALUES (:email, :password_hash)');
-            $stmt->execute([':email' => $email, ':password_hash' => $hash]);
+                // ensure new users are not admins by default
+                $sql = db_prepare_sql('INSERT INTO users (email, password_hash, is_admin) VALUES (:email, :password_hash, :is_admin)', ['email' => $email, 'password_hash' => $hash, 'is_admin' => 0]);
+            $mysqli->query($sql);
             flash('success', 'Inscription réussie. Vous pouvez maintenant vous connecter.');
             redirect('login.php');
         }

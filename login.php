@@ -11,14 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $password === '') {
         $errors[] = 'Email et mot de passe sont requis.';
     } else {
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
-        $stmt->execute([':email' => $email]);
-        $user = $stmt->fetch();
+        global $mysqli;
+        $final = db_prepare_sql('SELECT * FROM users WHERE email = :email', ['email' => $email]);
+        $res = $mysqli->query($final);
+        $user = $res ? $res->fetch_assoc() : false;
         if (!$user || !password_verify($password, $user['password_hash'])) {
             $errors[] = 'Email ou mot de passe incorrect.';
         } else {
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user'] = ['id' => $user['id'], 'email' => $user['email']];
+            $_SESSION['user'] = ['id' => $user['id'], 'email' => $user['email'], 'is_admin' => $user['is_admin'] ?? 0];
             redirect('index.php');
         }
     }

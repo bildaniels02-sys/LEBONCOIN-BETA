@@ -7,9 +7,11 @@ if (!$id || !is_numeric($id)) {
     redirect('index.php');
 }
 
-$stmt = $pdo->prepare('SELECT * FROM ads WHERE id = :id AND user_id = :user_id');
-$stmt->execute([':id' => $id, ':user_id' => $_SESSION['user_id']]);
-$ad = $stmt->fetch();
+$ad = null;
+global $mysqli;
+$final = db_prepare_sql('SELECT * FROM ads WHERE id = :id AND user_id = :user_id', ['id' => $id, 'user_id' => $_SESSION['user_id']]);
+$res = $mysqli->query($final);
+$ad = $res ? $res->fetch_assoc() : false;
 if (!$ad) {
     redirect('index.php');
 }
@@ -49,15 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     if (empty($errors)) {
-        $stmt = $pdo->prepare('UPDATE ads SET title = :title, price = :price, description = :description, category = :category, photo = :photo WHERE id = :id');
-        $stmt->execute([
-            ':title' => $title,
-            ':price' => $price,
-            ':description' => $description,
-            ':category' => $category,
-            ':photo' => $photoPath,
-            ':id' => $id,
+        $sql = db_prepare_sql('UPDATE ads SET title = :title, price = :price, description = :description, category = :category, photo = :photo WHERE id = :id', [
+            'title' => $title,
+            'price' => $price,
+            'description' => $description,
+            'category' => $category,
+            'photo' => $photoPath,
+            'id' => $id,
         ]);
+        $mysqli->query($sql);
         flash('success', 'Annonce modifiée avec succès.');
         redirect('ad_detail.php?id=' . $id);
     }

@@ -7,17 +7,19 @@ if (!$id || !is_numeric($id)) {
     redirect('index.php');
 }
 
-$stmt = $pdo->prepare('SELECT * FROM ads WHERE id = :id AND user_id = :user_id');
-$stmt->execute([':id' => $id, ':user_id' => $_SESSION['user_id']]);
-$ad = $stmt->fetch();
+$ad = null;
+global $mysqli;
+$final = db_prepare_sql('SELECT * FROM ads WHERE id = :id AND user_id = :user_id', ['id' => $id, 'user_id' => $_SESSION['user_id']]);
+$res = $mysqli->query($final);
+$ad = $res ? $res->fetch_assoc() : false;
 if (!$ad) {
     redirect('index.php');
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['confirm']) && $_POST['confirm'] === 'yes') {
-        $stmt = $pdo->prepare('DELETE FROM ads WHERE id = :id');
-        $stmt->execute([':id' => $id]);
+        $sql = db_prepare_sql('DELETE FROM ads WHERE id = :id', ['id' => $id]);
+        $mysqli->query($sql);
         flash('success', 'Annonce supprimée.');
         redirect('index.php');
     }

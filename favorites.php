@@ -2,9 +2,14 @@
 require_once __DIR__ . '/includes/functions.php';
 requireLogin();
 
-$stmt = $pdo->prepare('SELECT a.*, u.email AS owner_email FROM ads a JOIN favorites f ON a.id = f.ad_id JOIN users u ON a.user_id = u.id WHERE f.user_id = :user_id ORDER BY a.created_at DESC');
-$stmt->execute([':user_id' => $_SESSION['user_id']]);
-$ads = $stmt->fetchAll();
+$ads = [];
+global $mysqli;
+$final = db_prepare_sql('SELECT a.*, u.email AS owner_email FROM ads a JOIN favorites f ON a.id = f.ad_id JOIN users u ON a.user_id = u.id WHERE f.user_id = :user_id ORDER BY a.created_at DESC', ['user_id' => $_SESSION['user_id']]);
+$res = $mysqli->query($final);
+if ($res) {
+    $ads = $res->fetch_all(MYSQLI_ASSOC);
+    $res->free();
+}
 
 include __DIR__ . '/templates/header.php';
 ?>
